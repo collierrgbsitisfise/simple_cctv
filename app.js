@@ -1,22 +1,58 @@
-const cv = require("opencv4nodejs");
-const path = require("path");
-const express = require("express");
-const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
+var cv = require("opencv4nodejs");
+var sleep = require("sleep");
 
-const wCap = new cv.VideoCapture(0);
-wCap(cv.CAP_PROP_FRAME_WIDTH, 300);
-wCap(cv.CAP_PROP_FRAME_HEIGHT, 300);
+var camera = new cv.VideoCapture(0); //open camera
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+//set the video size to 512x288
+camera.setWidth(512);
+camera.setHeight(288);
+var window = new cv.NamedWindow("Camera");
+var firstFrame, frameDelta, gray, thresh;
+
+sleep.sleep(3);
+camera.read(function(err, frame) {
+  firstFrame = frame;
+  //convert to grayscale
+  firstFrame.cvtColor("CV_BGR2GRAY");
+  firstFrame.gaussianBlur([21, 21]);
 });
 
-setInterval(() => {
-  const frame = wCap.read();
-  const image = cv.imencode(".jpg", frame).toString("base64");
-  io.emit("image", image);
-}, 200);
+interval = setInterval(function() {
+  camera.read(function(err, frame) {
+    gray = frame.copy();
+    gray.cvtColor("CV_BGR2GRAY");
+    gray.gaussianBlur([21, 21]);
 
-server.listen(3000);
+    frameDelta = new cv.Matrix();
+    //compute difference between first frame and current frame
+    frameDelta.absDiff(firstFrame, gray);
+    thresh = frameDelta.threshold(25, 255);
+    thresh.dilate(2);
+
+    var cnts = thresh.findContours();
+
+    for (i = 0; i < cnts.size(); i++) {
+      if (cnts.area(i) < 500) {
+        continue;
+      }
+
+      frame.putText(
+        "Motion Detected",
+        10,
+        20,
+        cv.FONT_HERSHEY_SIMPLEX,
+        [0, 0, 255],
+        0.75,
+        2
+      );
+    }
+
+    window.show(frame);
+    keyPressed = window.blockingWaitKey(0, 50);
+
+    if (keyPressed == 27) {
+      //exit if ESC is pressed
+      clearInterval(interval);
+    }
+  });
+}, 20);

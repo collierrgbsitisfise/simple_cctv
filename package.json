@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.17.0",
     "opencv4nodejs": "^4.16.0",
+    "sleep": "^6.1.0",
     "socket.io": "^2.2.0"
   }
 }
