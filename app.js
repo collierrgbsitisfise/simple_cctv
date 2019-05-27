@@ -4,62 +4,67 @@ const sleep = require("sleep");
 const camera = new cv.VideoCapture(0); //open camera
 
 //set the video size to 512x288
-camera.setWidth(512);
-camera.setHeight(288);
+camera.setWidth(712);
+camera.setHeight(712);
 
 let firstFrame, wasMotionDetected;
 
-camera.read(function(err, frame) {
-  firstFrame = frame;
-  //convert to grayscale
-  firstFrame.cvtColor("CV_BGR2GRAY");
-  firstFrame.gaussianBlur([21, 21]);
-});
-
 const updateFiertImage = () => {
-  return new Promise((res, rej) => {
+  return new Promise((resolve, _) => {
     camera.read(function(err, frame) {
       frame.save("original.jpg");
       firstFrame = frame;
       firstFrame.cvtColor("CV_BGR2GRAY");
       firstFrame.gaussianBlur([21, 21]);
-      res(true);
+      resolve(true);
     });
   });
 };
 
 sleep.sleep(2);
 
-interval = setInterval(function() {
-  camera.read(async function(err, frame) {
-    wasMotionDetected = false;
-    let gray = frame.copy();
+const getCameraSnapShot = () => {
+  return new Promise((resolve, _) => {
+    camera.read(async function(err, frame) {
+      wasMotionDetected = false;
+      let gray = frame.copy();
 
-    gray.cvtColor("CV_BGR2GRAY");
-    gray.gaussianBlur([21, 21]);
+      gray.cvtColor("CV_BGR2GRAY");
+      gray.gaussianBlur([21, 21]);
 
-    let frameDelta = new cv.Matrix();
+      let frameDelta = new cv.Matrix();
 
-    frameDelta.absDiff(firstFrame, gray);
+      frameDelta.absDiff(firstFrame, gray);
 
-    let thresh = frameDelta.threshold(25, 255);
+      let thresh = frameDelta.threshold(25, 255);
 
-    thresh.dilate(2);
+      thresh.dilate(2);
 
-    let cnts = thresh.findContours();
+      let cnts = thresh.findContours();
 
-    console.log(cnts.size());
-    for (i = 0; i < cnts.size(); i++) {
-      if (cnts.area(i) < 500) {
-        continue;
+      console.log(cnts.size());
+      for (i = 0; i < cnts.size(); i++) {
+        if (cnts.area(i) < 500) {
+          continue;
+        }
+
+        wasMotionDetected = true;
       }
 
-      wasMotionDetected = true;
-    }
+      if (wasMotionDetected) {
+        console.log("MOTION DETECTED!!");
+        await updateFiertImage();
+      }
 
-    if (wasMotionDetected) {
-      console.log("MOTION DETECTED!!");
-      await updateFiertImage();
-    }
+      resolve(true);
+    });
   });
-}, 500);
+};
+
+(async () => {
+  await updateFiertImage();
+  while (true) {
+    await getCameraSnapShot();
+    sleep.sleep(1);
+  }
+})();
