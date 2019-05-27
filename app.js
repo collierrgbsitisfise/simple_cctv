@@ -1,9 +1,18 @@
 const cv = require("opencv");
 const sleep = require("sleep");
-
+const TelegramBot = require("node-telegram-bot-api");
 const camera = new cv.VideoCapture(0); //open camera
+const chatID = process.env.chatid;
+const token = process.env.token;
 
-//set the video size to 512x288
+console.log("chatID : ", chatID);
+console.log("token : ", token);
+
+const bot = new TelegramBot(token, {
+  polling: true
+});
+
+// set the video size to 512x288
 camera.setWidth(712);
 camera.setHeight(712);
 
@@ -13,6 +22,9 @@ const updateFiertImage = () => {
   return new Promise((resolve, _) => {
     camera.read(function(err, frame) {
       frame.save("original.jpg");
+      bot.sendPhoto(chatID, require("fs").readFileSync("original.jpg"), {
+        caption: "DVIJUHA"
+      });
       firstFrame = frame;
       firstFrame.cvtColor("CV_BGR2GRAY");
       firstFrame.gaussianBlur([21, 21]);
@@ -42,7 +54,6 @@ const getCameraSnapShot = () => {
 
       let cnts = thresh.findContours();
 
-      console.log(cnts.size());
       for (i = 0; i < cnts.size(); i++) {
         if (cnts.area(i) < 500) {
           continue;
@@ -52,7 +63,6 @@ const getCameraSnapShot = () => {
       }
 
       if (wasMotionDetected) {
-        console.log("MOTION DETECTED!!");
         await updateFiertImage();
       }
 
@@ -65,6 +75,6 @@ const getCameraSnapShot = () => {
   await updateFiertImage();
   while (true) {
     await getCameraSnapShot();
-    sleep.sleep(1);
+    sleep.msleep(500);
   }
 })();
