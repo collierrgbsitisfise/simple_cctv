@@ -18,7 +18,7 @@ camera.setHeight(712);
 
 let firstFrame, wasMotionDetected;
 
-const updateFiertImage = () => {
+const updateFirstImage = () => {
   return new Promise((resolve, _) => {
     camera.read(function(err, frame) {
       frame.save("original.jpg");
@@ -63,7 +63,7 @@ const getCameraSnapShot = () => {
       }
 
       if (wasMotionDetected) {
-        await updateFiertImage();
+        await updateFirstImage();
       }
 
       resolve(true);
@@ -71,8 +71,9 @@ const getCameraSnapShot = () => {
   });
 };
 
+// main loop
 (async () => {
-  await updateFiertImage();
+  await updateFirstImage();
   while (true) {
     await getCameraSnapShot();
     sleep.msleep(500);
