@@ -1,15 +1,15 @@
-const BOT = require("./bot");
-const CCTV = require("./cctv");
+const { BOT } = require("./bot");
+const { CCTV } = require("./cctv");
 
 const main = () => {
   const chatID = process.env.chatid;
   const token = process.env.token;
-  console.log("chatID ", chatID);
-  console.log("token ", token);
+  const bot = new BOT(token, chatID);
+  const cctv = new CCTV(712, 712, 500, imgData => {
+    bot.sendPhotoToUser(imgData);
+  });
+
+  cctv.start();
 };
 
-// const c = new CCTV(712, 712, 500, function() {
-//   console.log("MOTION DETECTED");
-// });
-// await c.start();
 main();

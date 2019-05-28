@@ -1,16 +1,16 @@
 const TelegramBot = require("node-telegram-bot-api");
 
 class BOT {
-  constructor(tokne, userId) {
+  constructor(tokne, charID) {
     this.tokne = tokne;
-    this.userId = userId;
-    this.bot = new TelegramBot(token, {
+    this.charID = charID;
+    this.bot = new TelegramBot(tokne, {
       polling: true
     });
   }
 
   sendPhotoToUser(photoData, caption) {
-    bot.sendPhoto(this.userId, photoData, {
+    this.bot.sendPhoto(this.charID, photoData, {
       caption
     });
   }
