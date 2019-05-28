@@ -87,10 +87,4 @@ class CCTV {
   }
 }
 
-(async () => {
-  const c = new CCTV(712, 712, 500, function() {
-    console.log("MOTION DETECTED");
-  });
-  await c.start();
-})();
 module.exports.CCTV = CCTV;
