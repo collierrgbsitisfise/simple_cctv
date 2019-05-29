@@ -7,11 +7,21 @@ const main = async () => {
   const token = process.env.token;
   const bot = new BOT(token, chatID);
   const sm = new SystemMonitor();
+
+  bot
+    .registerRoute(/\/ramusg/, async () => {
+      const ramUsage = await sm.getRAMInfo();
+      bot.sendTextToUser(ramUsage);
+    })
+    .registerRoute(/\/cpuusg/, async () => {
+      const ramUsage = await sm.getRAMInfo();
+      bot.sendTextToUser(ramUsage);
+    });
+
   const cctv = new CCTV(712, 712, 500, imgData => {
-    // bot.sendPhotoToUser(imgData);
+    bot.sendPhotoToUser(imgData);
   });
 
-  console.log(await sm.getRAMInfo());
   cctv.start();
 };
 

@@ -14,6 +14,15 @@ class BOT {
       caption
     });
   }
+
+  sendTextToUser(msg) {
+    this.bot.sendMessage(this.charID, msg);
+  }
+
+  registerRoute(route, handlerCb) {
+    this.bot.onText(route, handlerCb);
+    return this;
+  }
 }
 
 module.exports.BOT = BOT;
