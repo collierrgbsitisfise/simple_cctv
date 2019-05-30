@@ -1,7 +1,7 @@
 const { BOT } = require("./bot");
 const { CCTV } = require("./cctv");
 const { SystemMonitor } = require("./systemMonitor");
-
+const { Speach } = require("./speach");
 const main = async () => {
   const chatID = process.env.chatid;
   const token = process.env.token;
@@ -16,6 +16,11 @@ const main = async () => {
     .registerRoute(/\/cpuusg/, async () => {
       const ramUsage = await sm.getRAMInfo();
       bot.sendTextToUser(ramUsage);
+    })
+    .registerRoute(/\/playtext (.+)/, async (_, match) => {
+      const text = match[1];
+      const fileName = await Speach.getSpeachByText(text, "kek");
+      await Speach.executeAudioMp3(fileName);
     });
 
   const cctv = new CCTV(712, 712, 500, imgData => {
@@ -26,3 +31,5 @@ const main = async () => {
 };
 
 main();
+
+// sudo apt-get install mpg321
