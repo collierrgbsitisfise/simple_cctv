@@ -11,6 +11,7 @@ class CCTV {
     this.wasMotionDetected = false;
     this.firstFrame = null;
   }
+
   async start() {
     sleep.sleep(2);
     this.camera.setWidth(this.width);
@@ -21,6 +22,7 @@ class CCTV {
       sleep.msleep(500);
     }
   }
+
   setFirstFrame() {
     return new Promise((resolve, _) => {
       this.camera.read((err, frame) => {
@@ -31,6 +33,7 @@ class CCTV {
       });
     });
   }
+
   updateFirstImage() {
     return new Promise((resolve, _) => {
       this.camera.read(async (err, frame) => {
@@ -43,6 +46,7 @@ class CCTV {
       });
     });
   }
+
   getCameraSnapShot() {
     return new Promise((resolve, _) => {
       this.camera.read(

@@ -4,7 +4,7 @@
 > send alarm by Telegram
 > handle text, convert it in speach using google translate API
 
-# Install and compile openvcv
+# Install and compile opencv 🔭🔭🔭
 
 **_step by step instruction_**
 
@@ -12,7 +12,7 @@
 https://linuxize.com/post/how-to-install-opencv-on-ubuntu-18-04/
 ```
 
-# Install mpg123
+# Install mpg123 🗣🗣🗣
 
 **_to play .mp3_**
 
@@ -24,5 +24,11 @@ sudo apt-get install mpg321
 
 ```sh
 export chatid=<chatId> # chatid where will be send alarms
-export token=<token> # bot token
+export token=<token> # bot token (https://tlgrm.ru/docs/bots)
+```
+
+# grand start 🚀🚀🚀
+
+```sh
+node app.js
 ```
