@@ -31,5 +31,3 @@ const main = async () => {
 };
 
 main();
-
-// sudo apt-get install mpg321
