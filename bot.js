@@ -1,11 +1,19 @@
 const TelegramBot = require("node-telegram-bot-api");
 
 class BOT {
-  constructor(tokne, charID) {
+  constructor(tokne, charID, aduioHandler = () => {}) {
     this.tokne = tokne;
     this.charID = charID;
+    this.aduioHandler = aduioHandler;
     this.bot = new TelegramBot(tokne, {
       polling: true
+    });
+
+    this.bot.on("message", msg => {
+      const { voice } = msg;
+      if (voice) {
+        this.aduioHandler(voice.file_id, this.tokne);
+      }
     });
   }
 

@@ -5,7 +5,11 @@ const { Speach } = require("./speach");
 const main = async () => {
   const chatID = process.env.chatid;
   const token = process.env.token;
-  const bot = new BOT(token, chatID);
+  const bot = new BOT(
+    token,
+    chatID,
+    Speach.executeOggAudioFromTelegramByFileId
+  );
   const sm = new SystemMonitor();
 
   bot
