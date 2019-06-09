@@ -68,7 +68,7 @@ class Speach {
 
     // convert .oga to .mp3
     await new Promise((res, _) => {
-      exec("ffmpeg -i voice_command.oga voice_command.mp3", () => {
+      exec("ffmpeg -i voice_command.oga voice_command.mp3 -y", () => {
         res(true);
       });
     });
